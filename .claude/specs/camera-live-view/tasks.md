@@ -13,56 +13,115 @@ This document defines the atomic implementation tasks for the camera live view f
 
 ### Phase 1: Foundation and Utilities (Leverage Existing Infrastructure)
 
-#### Task 1.1: Create Base Project Structure
-- [ ] Create directory structure following structure.md conventions
-- [ ] **Files**: Create `src/`, `src/api/`, `src/gui/`, `src/video/`, `src/models/`, `src/utils/` directories
-- [ ] **Files**: Create `__init__.py` files in all package directories
-- [ ] **Requirements**: Supports project organization from structure.md
-- [ ] **Leverages**: Existing project structure conventions
+#### Task 1.1: Create Core Directory Structure
+- [x] 1.1. Create main source directories (`src/`, `tests/`, `config/`) per structure.md conventions
+- [ ] **Files**: Create directories only, no files
+- [ ] **Requirements**: Supports FR-all (foundational structure)
+- [ ] **Leverages**: Directory organization from structure.md
 
-#### Task 1.2: Implement Configuration Manager
-- [ ] Create configuration management utility in `src/utils/config.py`
+#### Task 1.2: Create Module Package Structure
+- [ ] 1.2. Create module directories (`src/api/`, `src/gui/`, `src/video/`, `src/models/`, `src/utils/`)
+- [ ] **Files**: Module directories only
+- [ ] **Requirements**: Supports FR-all (module organization)
+- [ ] **Leverages**: Module patterns from structure.md
+
+#### Task 1.3: Add Package Init Files
+- [ ] 1.3. Create `__init__.py` files in all package directories
+- [ ] **Files**: `src/__init__.py`, `src/api/__init__.py`, `src/gui/__init__.py`, `src/video/__init__.py`, `src/models/__init__.py`, `src/utils/__init__.py`
+- [ ] **Requirements**: Supports Python package structure
+- [ ] **Leverages**: Package import patterns from structure.md
+
+#### Task 1.4: Create Configuration Manager Base
+- [ ] 1.4. Create configuration utility class in `src/utils/config.py`
 - [ ] **Files**: `src/utils/config.py`
-- [ ] **Features**: Environment variable loading, settings.ini parsing, validation
-- [ ] **Requirements**: Addresses TR-4 configuration management from requirements.md
-- [ ] **Leverages**: Existing configuration patterns from structure.md
+- [ ] **Requirements**: Addresses TR-4 configuration management
+- [ ] **Leverages**: Configuration patterns from structure.md
 
-#### Task 1.3: Implement Logger Infrastructure
-- [ ] Create logging utility in `src/utils/logger.py`
+#### Task 1.5: Add Environment Variable Loading
+- [ ] 1.5. Add environment variable loading to ConfigManager in `src/utils/config.py`
+- [ ] **Files**: `src/utils/config.py` (enhancement)
+- [ ] **Requirements**: Addresses NFR-16 credential storage
+- [ ] **Leverages**: Environment handling patterns from structure.md
+
+#### Task 1.6: Add Settings File Parsing
+- [ ] 1.6. Add settings.ini parsing capability to ConfigManager in `src/utils/config.py`
+- [ ] **Files**: `src/utils/config.py` (enhancement)
+- [ ] **Requirements**: Addresses TR-4 runtime settings
+- [ ] **Leverages**: File parsing utilities from structure.md
+
+#### Task 1.7: Create Logger Infrastructure Base
+- [ ] 1.7. Create logging utility class in `src/utils/logger.py`
 - [ ] **Files**: `src/utils/logger.py`
-- [ ] **Features**: Structured logging, log levels, file and console output
 - [ ] **Requirements**: Supports comprehensive logging from TR-4
-- [ ] **Leverages**: Existing logging configuration patterns from structure.md
+- [ ] **Leverages**: Logging configuration patterns from structure.md
 
-#### Task 1.4: Create Camera Data Model
-- [ ] Implement Camera model in `src/models/camera.py`
+#### Task 1.8: Add Log Level Configuration
+- [ ] 1.8. Add log level and output configuration to Logger in `src/utils/logger.py`
+- [ ] **Files**: `src/utils/logger.py` (enhancement)
+- [ ] **Requirements**: Supports debugging and monitoring
+- [ ] **Leverages**: Logging hierarchy from structure.md
+
+#### Task 1.9: Create Camera Data Model
+- [ ] 1.9. Create Camera model class in `src/models/camera.py`
 - [ ] **Files**: `src/models/camera.py`
-- [ ] **Features**: Camera entity with id, name, host, stream_url, status
 - [ ] **Requirements**: Supports camera management from FR-1
 - [ ] **Leverages**: Model patterns from structure.md
 
-#### Task 1.5: Create StreamInfo Data Model
-- [ ] Implement StreamInfo model in `src/models/streaming.py`
+#### Task 1.10: Add Camera Status Enumeration
+- [ ] 1.10. Add CameraStatus enum to `src/models/camera.py`
+- [ ] **Files**: `src/models/camera.py` (enhancement)
+- [ ] **Requirements**: Supports camera status tracking from NFR-12
+- [ ] **Leverages**: Enum patterns from structure.md
+
+#### Task 1.11: Create StreamInfo Data Model
+- [ ] 1.11. Create StreamInfo model class in `src/models/streaming.py`
 - [ ] **Files**: `src/models/streaming.py`
-- [ ] **Features**: Stream metadata tracking, performance metrics, status enums
-- [ ] **Requirements**: Supports stream performance monitoring from FR-5
+- [ ] **Requirements**: Supports stream performance monitoring from FR-5, NFR-3
 - [ ] **Leverages**: Model patterns from structure.md
 
 ### Phase 2: API Integration Layer
 
-#### Task 2.1: Implement Authentication Manager
-- [ ] Create authentication handler in `src/api/auth.py`
+#### Task 2.1: Create Authentication Manager Base
+- [ ] 2.1. Create AuthManager class in `src/api/auth.py`
 - [ ] **Files**: `src/api/auth.py`
-- [ ] **Features**: Cookie-based authentication, session management, credential validation
-- [ ] **Requirements**: Addresses FR-6 authentication and AC-6 session management
+- [ ] **Requirements**: Addresses FR-6 authentication
 - [ ] **Leverages**: HTTP session patterns from structure.md
 
-#### Task 2.2: Create UniFi Video API Client
-- [ ] Implement UniFi Video client in `src/api/client.py`
+#### Task 2.2: Add Cookie Authentication
+- [ ] 2.2. Add cookie-based authentication to AuthManager in `src/api/auth.py`
+- [ ] **Files**: `src/api/auth.py` (enhancement)
+- [ ] **Requirements**: Addresses AC-6 session management, NFR-16 credential storage
+- [ ] **Leverages**: Security patterns from structure.md
+
+#### Task 2.3: Add Session Management
+- [ ] 2.3. Add session expiry and renewal to AuthManager in `src/api/auth.py`
+- [ ] **Files**: `src/api/auth.py` (enhancement)
+- [ ] **Requirements**: Addresses NFR-9 automatic session renewal
+- [ ] **Leverages**: Session handling patterns from structure.md
+
+#### Task 2.4: Create UniFi Video Client Base
+- [ ] 2.4. Create UniFiClient class in `src/api/client.py`
 - [ ] **Files**: `src/api/client.py`
-- [ ] **Features**: Login, camera discovery, stream URL retrieval, error handling
-- [ ] **Requirements**: Addresses TR-1 API integration and endpoints
+- [ ] **Requirements**: Addresses TR-1 API integration
 - [ ] **Leverages**: RESTful client patterns from structure.md
+
+#### Task 2.5: Add Login Endpoint
+- [ ] 2.5. Add login functionality to UniFiClient in `src/api/client.py`
+- [ ] **Files**: `src/api/client.py` (enhancement)
+- [ ] **Requirements**: Addresses AC-6 authentication integration
+- [ ] **Leverages**: API patterns from unifivideo1.apib
+
+#### Task 2.6: Add Camera Discovery
+- [ ] 2.6. Add camera discovery endpoint to UniFiClient in `src/api/client.py`
+- [ ] **Files**: `src/api/client.py` (enhancement)
+- [ ] **Requirements**: Addresses FR-1 camera selection, AC-1 camera listing
+- [ ] **Leverages**: API patterns from unifivideo1.apib
+
+#### Task 2.7: Add Stream URL Retrieval
+- [ ] 2.7. Add stream URL endpoint to UniFiClient in `src/api/client.py`
+- [ ] **Files**: `src/api/client.py` (enhancement)
+- [ ] **Requirements**: Addresses FR-5 stream quality, TR-2 video streaming
+- [ ] **Leverages**: API patterns from unifivideo1.apib
 
 #### Task 2.3: Add API Response Models
 - [ ] Create API response models in `src/api/models.py`
