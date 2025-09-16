@@ -1,0 +1,535 @@
+FORMAT: 1A
+HOST: http://unifivideo.server.com/
+
+# Unifi Video
+
+API documentation for version 2.0 of Unifi Video API.
+
+## Authentication
+
+The API uses a cookie for authentication so after making
+the login request the cookie must be included in all other
+requests.
+
+## Error Handling [/api/2.0]
+
+### Error [PUT]
+
+When making `PUT` calls to update values you might reciveve an `400`
+response becuase a required field was not included in the JSON body
+looking at the error response will show which fields are missing.
+In this exmaple a `PUT` request was made to `/api/2.0/server/(CameraId)`
+but the `name` field was not included so the request failed.
+If the field is something like `recordingSettings.storagePath` then
+the missing field would be
+`{"recordingSettings":{"storagePath": "missing"}}`
+
++ Response 400 (application/json)
+
+            {
+                "rc": "error",
+                "message": "api.err.ValidationFailed",
+                "errors": [
+                    {
+                        "failedFieldName": "name",
+                        "fieldErrorCode": "required",
+                        "requiredType": null
+                    }
+                ]
+            }
+
+## Login [/api/2.0/login]
+
+### Login [POST]
+
+In the reponse there will be a cookie `JSESSIONID_AV`
+this will need to be used in all other API requests.
+
++ Request (application/json)
+
+        {
+            "email": "(Email)",
+            "password": "(Password)"
+        }
+
++ Response 200 (application/json)
+        
+    + Headers
+
+            Set-Cookie: JSESSIONID_AV=(Value Here); Path=/; Secure; HttpOnly
+
+    + Body
+
+            { "data":
+                [
+                    {
+                        "account": {
+                            "name": "Account Name",
+                            "email": "sample@sample.com",
+                            "username": "account",
+                            "language": "English",
+                            "lastIp": "127.0.0.1",
+                            "lastLoginTimeStamp": 1000000,
+                            "_id": "(Don't Use This Id)"
+                        },
+                        "disabled": false,
+                        "apiKey": "(This is not used for API)",
+                        "mobileKey": "(This is not used for API)",
+                        "enableApiAccess": true,
+                        "enableLocalAccess": true,
+                        "subscribedMotion": [
+                            "Camera ID"
+                        ],
+                        "subscribedCameraConnection": [
+                            "Camera ID"
+                        ],
+                        "enableEmail": true,
+                        "_id": "(This is the User Id)"
+                    }
+                ]
+            }
+
+## Server Info [/api/2.0/server/(ServerId)]
+
+### Get Server Info [GET]
+
+Gets server info and settings. Must include `JSESSIONID_AV` cookie in header.
+The `ServerID` in the URL is not required in the `GET` request but can be used
+to filter the results to just one server.
+
++ Request (application/json)
+
+    + Headers
+    
+            Cookie: JSESSIONID_AV=(Value Here)
+
++ Response 200 (application/json)
+
+        { "data":
+            [
+                {
+                    "name": "Sever Name",
+                    "uuid": "(Don't Use This ID)"
+                    "uptime": "10000000",
+                    "recordingSettings": {
+                        "storagePath": "/usr/lib/unifi-video/data/videos",
+                        "mbToRetain": "30720",
+                        "timeToRetain": "account",
+                        "timeToRetain": "86400000"
+                    },
+                    "systemSettings": {
+                        "timeZone": "America/New_York",
+                        "defaultLanguage": "English",
+                        "disableStatsGathering": true,
+                        "disableDiscovery": false,
+                        "useUpnp": false,
+                        "disableAutoCameraUpdate": false
+                    },
+                    "emailSettings": {
+                        "publicHost": "https://smpt.google.com",
+                        "emailAddress": "sample@sample.com",
+                        "host": "smpt.google.com",
+                        "port": 465,
+                        "useSsl": true,
+                        "requiresAuthentication": true,
+                        "username": "sample@sample.com"
+                    },
+                    "alertSettings": {
+                        "enablePushNotifications": true,
+                        "enableConnectionEmails": true,
+                        "enableMotionEmails": true,
+                        "motionEmailCoolDownMs": 300000
+                    },
+                    "_id": "(This is the Server ID)"
+                }
+            ]
+        }
+
+### Update Server Info [PUT]
+
+Updates server info and settings. Must include `JSESSIONID_AV` cookie in header.
+You must include the `recordingSettings` but other items can be excluded
+if you do not want to change there value. There may be more values that can be
+changed that are not in the request but from testing this the only things that can be
+changed are the server name and recording settings. But alert settings can be
+changed from `/api/2.0/user/[UserId]` endpoint.
+
++ Request (application/json)
+
+    + Headers
+    
+            Cookie: JSESSIONID_AV=(Value Here)
+            
+    + Body
+
+            {
+                "name": "Sever Name",
+                "recordingSettings": {
+                    "storagePath": "/usr/lib/unifi-video/data/videos",
+                    "mbToRetain": "30720",
+                    "timeToRetain": "account",
+                    "timeToRetain": "86400000"
+                }
+            }
+
++ Response 200 (application/json)
+
+        { "data":
+            [
+                {
+                    "name": "Sever Name",
+                    "uuid": "(Don't Use This ID)"
+                    "uptime": "10000000",
+                    "recordingSettings": {
+                        "storagePath": "/usr/lib/unifi-video/data/videos",
+                        "mbToRetain": "30720",
+                        "timeToRetain": "account",
+                        "timeToRetain": "86400000"
+                    },
+                    "systemSettings": {
+                        "timeZone": "America/New_York",
+                        "defaultLanguage": "English",
+                        "disableStatsGathering": true,
+                        "disableDiscovery": false,
+                        "useUpnp": false,
+                        "disableAutoCameraUpdate": false
+                    },
+                    "emailSettings": {
+                        "publicHost": "https://smpt.google.com",
+                        "emailAddress": "sample@sample.com",
+                        "host": "smpt.google.com",
+                        "port": 465,
+                        "useSsl": true,
+                        "requiresAuthentication": true,
+                        "username": "sample@sample.com"
+                    },
+                    "alertSettings": {
+                        "enablePushNotifications": true,
+                        "enableConnectionEmails": true,
+                        "enableMotionEmails": true,
+                        "motionEmailCoolDownMs": 300000
+                    },
+                    "_id": "(This is the Server ID)"
+                }
+            ]
+        }
+
+
+## User Info [/api/2.0/server/(UserId)]
+
+### Get User Info [GET]
+
+Gets user info and settings. Must include `JSESSIONID_AV` cookie in header.
+The `UserId` in the URL is not required in the `GET` request but can be used
+to filter the results to just one user.
+
++ Request (application/json)
+
+    + Headers
+    
+            Cookie: JSESSIONID_AV=(Value Here)
+
++ Response 200 (application/json)
+
+        { "data":
+            [
+                {
+                    "name": "Sever Name",
+                    "uuid": "(Don't Use This ID)"
+                    "uptime": "10000000",
+                    "recordingSettings": {
+                        "storagePath": "/usr/lib/unifi-video/data/videos",
+                        "mbToRetain": "30720",
+                        "timeToRetain": "account",
+                        "timeToRetain": "86400000"
+                    },
+                    "systemSettings": {
+                        "timeZone": "America/New_York",
+                        "defaultLanguage": "English",
+                        "disableStatsGathering": true,
+                        "disableDiscovery": false,
+                        "useUpnp": false,
+                        "disableAutoCameraUpdate": false
+                    },
+                    "emailSettings": {
+                        "publicHost": "https://smpt.google.com",
+                        "emailAddress": "sample@sample.com",
+                        "host": "smpt.google.com",
+                        "port": 465,
+                        "useSsl": true,
+                        "requiresAuthentication": true,
+                        "username": "sample@sample.com"
+                    },
+                    "alertSettings": {
+                        "enablePushNotifications": true,
+                        "enableConnectionEmails": true,
+                        "enableMotionEmails": true,
+                        "motionEmailCoolDownMs": 300000
+                    },
+                    "_id": "(This is the Server ID)"
+                }
+            ]
+        }
+
+### Update User Info [PUT]
+
+Updates user info and settings. Must include `JSESSIONID_AV` cookie in header.
+Values can be excluded if you do not want to change there value. Here you
+can turn on/off alerts on disconnect and on motion for camera's by updating the
+array of `CameraId`'s in `subscribedMotion` and `subscribedCameraConnection` you
+must include all `CameraId`'s when updating the values or you can exlucde the
+array all togeather to not update the values. There might be more values that
+can be changed that are not in the request.
+
++ Request (application/json)
+
+    + Headers
+    
+            Cookie: JSESSIONID_AV=(Value Here)
+            
+    + Body
+
+            {
+                "subscribedMotion": [
+                    "Camera ID"
+                ],
+                "subscribedCameraConnection": [
+                    "Camera ID"
+                ]
+            }
+
++ Response 200 (application/json)
+
+        { "data":
+            [
+                {
+                    "name": "Sever Name",
+                    "uuid": "(Don't Use This ID)"
+                    "uptime": "10000000",
+                    "recordingSettings": {
+                        "storagePath": "/usr/lib/unifi-video/data/videos",
+                        "mbToRetain": "30720",
+                        "timeToRetain": "account",
+                        "timeToRetain": "86400000"
+                    },
+                    "systemSettings": {
+                        "timeZone": "America/New_York",
+                        "defaultLanguage": "English",
+                        "disableStatsGathering": true,
+                        "disableDiscovery": false,
+                        "useUpnp": false,
+                        "disableAutoCameraUpdate": false
+                    },
+                    "emailSettings": {
+                        "publicHost": "https://smpt.google.com",
+                        "emailAddress": "sample@sample.com",
+                        "host": "smpt.google.com",
+                        "port": 465,
+                        "useSsl": true,
+                        "requiresAuthentication": true,
+                        "username": "sample@sample.com"
+                    },
+                    "alertSettings": {
+                        "enablePushNotifications": true,
+                        "enableConnectionEmails": true,
+                        "enableMotionEmails": true,
+                        "motionEmailCoolDownMs": 300000
+                    },
+                    "_id": "(This is the Server ID)"
+                }
+            ]
+        }
+        
+
+## Camera Info [/api/2.0/server/(CameraId)]
+
+### Get Camera Info [GET]
+
+Gets camera info and settings. Must include `JSESSIONID_AV` cookie in header.
+The `CameraId` in the URL is not required in the `GET` request but can be used
+to filter the results to just one camera.
+
++ Request (application/json)
+
+    + Headers
+    
+            Cookie: JSESSIONID_AV=(Value Here)
+
++ Response 200 (application/json)
+
+        { "data":
+            [
+                {
+                    "name": "Camera Name",
+                    "uuid": "(Don't Use This ID)"
+                    "host": "127.0.0.1",
+                    "_id": "(This is the Camera ID)"
+                }
+            ]
+        }
+
+### Update Camera Info [PUT]
+
+Updates camera info and settings. Must include `JSESSIONID_AV` cookie in header.
+Values can be excluded if you do not want to change there value. Here you
+can turn on/off recording for a camera and possbily other things. There might
+be more values that can be changed that are not in the request.
+
++ Request (application/json)
+
+    + Headers
+    
+            Cookie: JSESSIONID_AV=(Value Here)
+            
+    + Body
+
+            {
+                "name": "Test",
+                "recordingSettings": {
+                    "motionRecordEnabled": false,
+                    "fullTimeRecordEnabled": false,
+                    "channel": "0"
+                }
+            }
+        
++ Response 200 (application/json)
+
+        { "data":
+            [
+                {
+                    "name": "Sever Name",
+                    "recordingSettings": {
+                        "storagePath": "/usr/lib/unifi-video/data/videos",
+                        "mbToRetain": "30720",
+                        "timeToRetain": "account",
+                        "timeToRetain": "86400000"
+                    },
+                    "systemSettings": {
+                        "timeZone": "America/New_York",
+                        "defaultLanguage": "English",
+                        "disableStatsGathering": true,
+                        "disableDiscovery": false,
+                        "useUpnp": false,
+                        "disableAutoCameraUpdate": false
+                    },
+                    "emailSettings": {
+                        "publicHost": "https://smpt.google.com",
+                        "emailAddress": "sample@sample.com",
+                        "host": "smpt.google.com",
+                        "port": 465,
+                        "useSsl": true,
+                        "requiresAuthentication": true,
+                        "username": "sample@sample.com"
+                    },
+                    "alertSettings": {
+                        "enablePushNotifications": true,
+                        "enableConnectionEmails": true,
+                        "enableMotionEmails": true,
+                        "motionEmailCoolDownMs": 300000
+                    },
+                }
+            ]
+        }
+
+## Camera Snapshot [/api/2.0/snapshot/camera/(CameraId)]
+
+### Get Camera Snapshot [GET]
+
+Gets JPEG snapshot for camera. Must include `JSESSIONID_AV` cookie in header.
+From testing this snapshot is only of the latest recording so if the camera
+is not recording then it will be a snapshot of the last time the camera was
+recording.
+
++ Request (application/json)
+
+    + Headers
+    
+            Cookie: JSESSIONID_AV=(Value Here)
+        
++ Response 200 (image/jpg)
+
+## Camera Stream [/api/2.0/stream/(CameraId)/(Channel)/url]
+
+### Get Camera Stream [GET]
+
+Gets urls for camera streams. Must include `JSESSIONID_AV` cookie in header.
+None of these url's have been tested there is some kind of authentication
+needed to access them. The `Channel` should always be `0` unless the camera
+has multiple camera's on it then there might be mutiple channels.
+
++ Request (application/json)
+
+    + Headers
+    
+            Cookie: JSESSIONID_AV=(Value Here)
+
++ Response 200 (application/json)
+
+        { "data":
+            [
+                {
+                    "rtmpPath": "rtmp://",
+                    "wsPath": "ws://"
+                    "wssPath": "wss://",
+                    "streamName": "(Name)"
+                }
+            ]
+        }
+
+## Camera Recording [/api/2.0/recording/(RecordingId)]
+
+### Get Camera Recording [GET]
+
+Gets camera recordings. Must include `JSESSIONID_AV` cookie in header.
+This is not yet documented and a `PUT` request might be possible to
+modify/delete a recording.
+
++ Request (application/json)
+
+    + Headers
+    
+            Cookie: JSESSIONID_AV=(Value Here)
+
++ Response 200 (application/json)
+
+        { "data":
+            [
+                {
+                    "_id": "Recording SegmentId"
+                }
+            ]
+        }
+
+## Download Recording [/api/2.0/recording/(RecordingId)/download]
+
+### Download Recording [GET]
+
+Gets mp4 file for recording. Must include `JSESSIONID_AV` cookie in header.
+
++ Request (application/json)
+
+    + Headers
+    
+            Cookie: JSESSIONID_AV=(Value Here)
+        
++ Response 200 (video/mp4)
+
+
+## Download Recording Segment [/api/2.0/recording/(UnkownId)/(UnkownId)]
+
+### Download Recording Segment [GET]
+
+Gets mp4 file for recording segment. Must include `JSESSIONID_AV` cookie in header.
+I have not figured out how this endpoint works but it is used to get a mp4 file of
+a segment of a recording. It can be used instead of the `/download` endpoint to get
+just a short segment of a recording it is probably used for playing recordings without
+having to load the entire recording as looking at how Unifi Video works it saves
+recordings in small segments.
+
++ Request (application/json)
+
+    + Headers
+    
+            Cookie: JSESSIONID_AV=(Value Here)
+        
++ Response 200 (video/mp4)
