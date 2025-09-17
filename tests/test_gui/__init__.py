@@ -1,0 +1,1 @@
+"""GUI test package for camera live view application."""

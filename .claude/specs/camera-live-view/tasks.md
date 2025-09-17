@@ -20,13 +20,13 @@ This document defines the atomic implementation tasks for the camera live view f
 - [ ] **Leverages**: Directory organization from structure.md
 
 #### Task 1.2: Create Module Package Structure
-- [ ] 1.2. Create module directories (`src/api/`, `src/gui/`, `src/video/`, `src/models/`, `src/utils/`)
+- [x] 1.2. Create module directories (`src/api/`, `src/gui/`, `src/video/`, `src/models/`, `src/utils/`)
 - [ ] **Files**: Module directories only
 - [ ] **Requirements**: Supports FR-all (module organization)
 - [ ] **Leverages**: Module patterns from structure.md
 
 #### Task 1.3: Add Package Init Files
-- [ ] 1.3. Create `__init__.py` files in all package directories
+- [x] 1.3. Create `__init__.py` files in all package directories
 - [ ] **Files**: `src/__init__.py`, `src/api/__init__.py`, `src/gui/__init__.py`, `src/video/__init__.py`, `src/models/__init__.py`, `src/utils/__init__.py`
 - [ ] **Requirements**: Supports Python package structure
 - [ ] **Leverages**: Package import patterns from structure.md
